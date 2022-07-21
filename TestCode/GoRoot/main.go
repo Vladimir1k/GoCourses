@@ -14,32 +14,33 @@ import (
 // “slice 1: 10”
 // “slice 2: 16”
 func main() {
-	var wg sync.WaitGroup
+	var (
+		wg sync.WaitGroup
+	)
+
 	n := [][]int{
 		{2, 6, 9, 24},
 		{7, 3, 94, 3, 0},
 		{4, 2, 8, 35},
 	}
 
-	for i := 0; i < len(n); i++ {
+	for i, value := range n {
 		wg.Add(1)
 
-		go func(n [][]int) {
+		go func(n []int, i int) {
+			sum(n, i)
+			defer wg.Done()
 
-			for _, value := range n {
-				fmt.Print(sum(value), "\n")
-				defer wg.Done()
-			}
-
-		}(n)
+		}(value, i)
 	}
+
 	wg.Wait()
 }
 
-func sum(s []int) int {
+func sum(s []int, i int) {
 	var sum int
 	for _, value := range s {
 		sum += value
 	}
-	return sum
+	fmt.Print("slice ", i+1, "=", sum, "\n")
 }
